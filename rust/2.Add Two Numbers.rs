@@ -19,38 +19,32 @@ impl Solution {
         let a = to_array(l1,vec![]);
         let b = to_array(l2,vec![]);
         
-        let a = a
-            .into_iter()
-            .rev()
-            .map(|e|e.to_string())
-            .collect::<Vec<String>>()
-            .join("")
-            .parse::<i32>()
-            .unwrap();
+        let mut carry = 0;
+        let mut i = 0;
+        let mut sum = vec![];
         
-        let b = b
-            .into_iter()
-            .rev()
-            .map(|e|e.to_string())
-            .collect::<Vec<String>>()
-            .join("")
-            .parse::<i32>()
-            .unwrap();
+        while a.len() > i 
+            || b.len() > i {
+            let l = a.get(i)
+                .unwrap_or(&0);
+            let r = b.get(i)
+                .unwrap_or(&0);
+                
+            let mut result = l + r + carry;
+            carry = 0;
+            if result >= 10 {
+                carry = 1;
+                result -= 10;
+            }
+                
+            sum.push(result);
+                
+            i += 1;
+        }
         
-        let sum = a+b;
-        
-        let sum: Vec<_> = sum
-            .to_string()
-            .chars()
-            .rev()
-            .map(
-                |e|
-                e
-                .to_string()
-                .parse::<i32>()
-                .unwrap()
-            )
-            .collect();
+        if carry > 0 {
+            sum.push(carry);
+        }
         
         return from_array(sum);
     }
@@ -84,9 +78,15 @@ fn from_array(
             current = &mut root;
         }
         else {
-            current.unwrap().next 
+            current
+                .as_mut()
+                .unwrap()
+                .next 
                 = Some(new_node);
-            current = &mut current.unwrap()
+            current =
+                &mut current
+                .as_mut()
+                .unwrap()
                 .next;
         }
     }
